@@ -1,6 +1,8 @@
 package com.example.shopper;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -30,7 +32,16 @@ public class DBHandler extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        //define create statement fdr shopping list table and store it
+        //in a string
+        String query = "CREATE TABLE " + TABLE_SHOPPING_LIST + "(" +
+                COLUMN_LIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_LIST_NAME + " TEXT, " +
+                COLUMN_LIST_STORE + " TEXT, " +
+                COLUMN_LIST_DATE + " TEXT);";
 
+        //execute the statement
+        sqLiteDatabase.execSQL(query);
     }
 
     /**
@@ -42,5 +53,55 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 
+        //define drop statement and store it in a string
+        String query = "DROP TABLE IF EXISTS " + TABLE_SHOPPING_LIST;
+
+        //execute the drop statement
+        sqLiteDatabase.execSQL(query);
+
+        //call the method that creates
+        onCreate(sqLiteDatabase);
+    }
+
+    /**
+     * this method gets called when the add button in the action bar of the
+     * createlist activity gets clicked. It inserts a new row into the shopping list table
+     * @param name shopping list name
+     * @param store shopping list store
+     * @param date shopping list date
+     */
+    public void addShoppingList(String name, String store, String date) {
+        //get reference to the shopper database
+        SQLiteDatabase db = getWritableDatabase();
+
+        //initialize a contentvalues object
+        ContentValues values = new ContentValues();
+
+        //put data into contentvalues object
+        values.put(COLUMN_LIST_NAME, name);
+        values.put(COLUMN_LIST_STORE, store);
+        values.put(COLUMN_LIST_DATE, date);
+
+        //insert data into contentvalues object into shoppinglist table
+        db.insert(TABLE_SHOPPING_LIST, null, values);
+
+        //close db reference
+        db.close();
+    }
+
+    /**
+     * this method gets called when the mainactivity is created. It will
+     * select and return all of the data in the shoppinglist table
+     * @return Cursor that contains all data in the shoppinglist table
+     */
+    public Cursor getShoppingList() {
+        //get reference to the shopper database
+        SQLiteDatabase db = getWritableDatabase();
+
+        //define select statement and store it in a string
+        String query = "SELECT * FROM " + TABLE_SHOPPING_LIST;
+
+        //execute the select statement and return it as a cursor
+        return db.rawQuery(query, null);
     }
 }

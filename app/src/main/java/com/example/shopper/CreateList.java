@@ -31,6 +31,9 @@ public class CreateList extends AppCompatActivity {
     //declare calendar
     Calendar calendar;
 
+    //declare DBHandler
+    DBHandler dbHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +87,8 @@ public class CreateList extends AppCompatActivity {
 
             }
         });
-
+        //initialize dbhandler
+        dbHandler = new DBHandler(this, null);
     }
 
     /**
@@ -152,7 +156,7 @@ public class CreateList extends AppCompatActivity {
             Toast.makeText(this, "Please enter a name, store, and date!", Toast.LENGTH_LONG).show();
         } else {
             //add list to DB
-
+            dbHandler.addShoppingList(name, store, date);
             //display Toast
             Toast.makeText(this, "Shopping list created!", Toast.LENGTH_LONG).show();
 
