@@ -10,6 +10,7 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
@@ -49,6 +50,28 @@ public class MainActivity extends AppCompatActivity {
 
         //set shoppinglists cursoradapter on listview
         shopperListView.setAdapter(shoppingListsCursorAdapter);
+
+        //set onitemclicklistener
+        shopperListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * this method gets called when an item in the listview is clicked
+             * @param adapterView shopperlistview
+             * @param view mainactivity view
+             * @param position [position of the clicked item
+             * @param id database of the clicked item
+             */
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                //initialize intent for the viewlist activity
+                intent = new Intent(MainActivity.this, ViewList.class);
+
+                //put the database id in the intent
+                intent.putExtra("_id", id);
+
+                //start the viewlist activity
+                startActivity(intent);
+            }
+        });
     }
 
     /**

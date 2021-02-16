@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.CursorAdapter;
 
 
 public class DBHandler extends SQLiteOpenHelper {
@@ -103,5 +104,41 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //execute the select statement and return it as a cursor
         return db.rawQuery(query, null);
+    }
+
+    /**
+     * this method gets called when the viewlist activity is started
+     * @param id shopping list id
+     * @return shopping list name
+     */
+    public String getShoppingListName(int id) {
+        //get reference to the shopper database
+        SQLiteDatabase db = getWritableDatabase();
+
+        //declare and initialize the string that will be returned
+        String name = "";
+
+        //define select statement
+        String query = "SELECT * FROM " + TABLE_SHOPPING_LIST +
+                " WHERE " + COLUMN_LIST_ID + " = " + id;
+
+        //execute select statement and store it in a cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //move to the first row in the cursor
+        cursor.moveToFirst();
+
+        //;check that name component of cursor isn't null
+        if ((cursor.getString(cursor.getColumnIndex("name")) != null)) {
+            //get the name component of the cursor and store it in a string
+            name = cursor.getString(cursor.getColumnIndex("name"));
+        }
+
+        //close reference to shopper db
+        db.close();
+
+        //return shopping list name
+        return name;
+
     }
 }
