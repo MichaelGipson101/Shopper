@@ -11,13 +11,21 @@ import android.widget.CursorAdapter;
 public class DBHandler extends SQLiteOpenHelper {
     //initialize constants for the DB name and version
     public static final String DATABASE_NAME = "shopper.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_SHOPPING_LIST = "shoppinglist";
     public static final String COLUMN_LIST_ID = "_id";
     public static final String COLUMN_LIST_NAME = "name";
     public static final String COLUMN_LIST_STORE = "store";
     public static final String COLUMN_LIST_DATE = "date";
+
+    public static final String TABLE_SHOPPING_LIST_ITEM = "shoppinglistitem";
+    public static final String COLUMN_ITEM_ID = "_id";
+    public static final String COLUMN_ITEM_NAME = "name";
+    public static final String COLUMN_ITEM_PRICE = "price";
+    public static final String COLUMN_ITEM_QUANTITY = "quantity";
+    public static final String COLUMN_ITEM_HAS = "item_has";
+    public static final String COLUMN_ITEM_LIST_ID = "list_id";
     /**
      * Create a version of the Shopper database
      * @param context reference to the activity that initializes a DBHandler
@@ -43,6 +51,19 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //execute the statement
         sqLiteDatabase.execSQL(query);
+
+        //define create statement fdr shopping list table and store it
+        //in a string
+        String query2 = "CREATE TABLE " + TABLE_SHOPPING_LIST_ITEM + "(" +
+                COLUMN_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_ITEM_NAME + " TEXT, " +
+                COLUMN_ITEM_PRICE + " DECIMAL(10,2), " +
+                COLUMN_ITEM_QUANTITY + " INTEGER, " +
+                COLUMN_ITEM_HAS + " TEXT, " +
+                COLUMN_ITEM_LIST_ID + " INTEGER);";
+
+        //execute the statement
+        sqLiteDatabase.execSQL(query2);
     }
 
     /**
@@ -59,6 +80,12 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //execute the drop statement
         sqLiteDatabase.execSQL(query);
+
+        //define drop statement and store it in a string
+        String query2 = "DROP TABLE IF EXISTS " + TABLE_SHOPPING_LIST_ITEM;
+
+        //execute the drop statement
+        sqLiteDatabase.execSQL(query2);
 
         //call the method that creates
         onCreate(sqLiteDatabase);
@@ -140,5 +167,34 @@ public class DBHandler extends SQLiteOpenHelper {
         //return shopping list name
         return name;
 
+    }
+
+    /**
+     *
+     * This method gets called when the add button in the action bar of the additem activity gets clicked
+     * @param name item name
+     * @param price item price
+     * @param quantity item quantity
+     * @param listid id of the shoppinglist to which the item is being added
+     */
+    public void addItemToList(String name, Double price, Integer quantity, Integer listid) {
+        //get reference to the shopper database
+        SQLiteDatabase db = getWritableDatabase();
+
+        //initialize a contentvalues object
+        ContentValues values = new ContentValues();
+
+        //put data into contentvalues object
+        values.put(COLUMN_ITEM_NAME, name);
+        values.put(COLUMN_ITEM_PRICE, price);
+        values.put(COLUMN_ITEM_QUANTITY, quantity);
+        values.put(COLUMN_ITEM_HAS, "false");
+        values.put(COLUMN_ITEM_LIST_ID, listid);
+
+        //insert data into contentvalues object into shoppinglistitem table
+        db.insert(TABLE_SHOPPING_LIST_ITEM, null, values);
+
+        //close db reference
+        db.close();
     }
 }
