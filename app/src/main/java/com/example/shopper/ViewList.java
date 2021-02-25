@@ -12,6 +12,9 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+
+import java.util.List;
 
 public class ViewList extends AppCompatActivity {
 
@@ -26,6 +29,12 @@ public class ViewList extends AppCompatActivity {
 
     //declare intent
     Intent intent;
+
+    //declare a shoppinglistitems cursor adapter
+    ShoppingListItems shoppingListItemsAdapter;
+
+    //declare listview
+    ListView itemListView;
 
 
     @Override
@@ -50,6 +59,14 @@ public class ViewList extends AppCompatActivity {
 
         //set the title of the viewlist activity to the shoppinglist name
         this.setTitle(shoppingListName);
+
+        itemListView = (ListView) findViewById(R.id.itemListView);
+
+        //initialize shoppinglistitems cursor adapter
+        shoppingListItemsAdapter = new ShoppingListItems(this, dbHandler.getShoppingListItems((int) id), 0);
+
+        itemListView.setAdapter(shoppingListItemsAdapter);
+
     }
     /**
      * this method further initializes the action bar of the activity.
