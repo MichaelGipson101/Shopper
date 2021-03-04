@@ -168,6 +168,41 @@ public class DBHandler extends SQLiteOpenHelper {
         return name;
 
     }
+    /**
+     * this method gets called when the viewlist activity is started
+     * @param id shopping list id
+     * @return shopping list name
+     */
+    public String getItemName(int id) {
+        //get reference to the shopper database
+        SQLiteDatabase db = getWritableDatabase();
+
+        //declare and initialize the string that will be returned
+        String name = "";
+
+        //define select statement
+        String query = "SELECT * FROM " + TABLE_SHOPPING_LIST_ITEM +
+                " WHERE " + COLUMN_ITEM_ID + " = " + id;
+
+        //execute select statement and store it in a cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //move to the first row in the cursor
+        cursor.moveToFirst();
+
+        //;check that name component of cursor isn't null
+        if ((cursor.getString(cursor.getColumnIndex("name")) != null)) {
+            //get the name component of the cursor and store it in a string
+            name = cursor.getString(cursor.getColumnIndex("name"));
+        }
+
+        //close reference to shopper db
+        db.close();
+
+        //return shopping list name
+        return name;
+
+    }
 
     /**
      *
@@ -210,6 +245,22 @@ public class DBHandler extends SQLiteOpenHelper {
         //define select statement and store it in a string
         String query = "SELECT * FROM " + TABLE_SHOPPING_LIST_ITEM +
                 " WHERE " + COLUMN_ITEM_LIST_ID + " = " + listid;
+
+        //execute the select statement and return it as a cursor
+        return db.rawQuery(query, null);
+    }
+    /**
+     * This method gets called when the viewItem activity is launched
+     * @param itemid item id
+     * @return Cursor that contains all of the items associated with the specific shopping list id
+     */
+    public Cursor getItems(Integer itemid) {
+        //get reference to the shopper database
+        SQLiteDatabase db = getWritableDatabase();
+
+        //define select statement and store it in a string
+        String query = "SELECT * FROM " + TABLE_SHOPPING_LIST_ITEM +
+                " WHERE " + COLUMN_ITEM_ID + " = " + itemid;
 
         //execute the select statement and return it as a cursor
         return db.rawQuery(query, null);
