@@ -309,4 +309,21 @@ public class DBHandler extends SQLiteOpenHelper {
         //close the db connection
         db.close();
     }
+
+    /**
+     * this method is going to get called when the viewitem activity is started
+     * @param itemId database id of clicked item
+     * @return Cursor that contains all of the data associated with the clicked shoppinglistiem
+     */
+    public Cursor getShoppingListItem (Integer itemId) {
+        //get reference to shopper dp
+        SQLiteDatabase db = getWritableDatabase();
+
+        //define select statement
+        String query = "SELECT * FROM " + TABLE_SHOPPING_LIST_ITEM +
+                " WHERE " + COLUMN_ITEM_ID + " = " + itemId;
+
+        //execute select statement
+        return db.rawQuery(query, null);
+    }
 }

@@ -83,6 +83,19 @@ public class ViewList extends AppCompatActivity {
                 //call method that updates the clicked items item_has to true
                 //if it's false
                 updateItem(id);
+
+                //initialize intent for viewitem activity
+                intent = new Intent(ViewList.this, ViewItem.class);
+
+                //put the database id in the intent
+                intent.putExtra("_id", id);
+
+                //put the database id in the intent
+                intent.putExtra("_list_id", ViewList.this.id);
+
+
+                //start the viewitem activity
+                startActivity(intent);
             }
         });
 
