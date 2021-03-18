@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class ViewItem extends AppCompatActivity {
     //delcare a bundle and a long used to get and store the data sent from
@@ -128,8 +129,15 @@ public class ViewItem extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    /**
+     * This method gets called when the delete button in the action bar of the view item activity gets clicked
+     * @param menuItem database id of the shopping list item to be deleted
+     */
     public void deleteItem(MenuItem menuItem) {
+        //delete shoppinglistitem from db
+        dbHandler.deleteShoppingListItem((int) id);
 
+        //display item deleted toast
+        Toast.makeText(this, "Item Deleted!", Toast.LENGTH_LONG).show();
     }
 }

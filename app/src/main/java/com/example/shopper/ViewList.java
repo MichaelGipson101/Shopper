@@ -99,6 +99,9 @@ public class ViewList extends AppCompatActivity {
             }
         });
 
+        //set the subtitle to the totalcost of the shoppinglist
+        toolbar.setSubtitle("Total Cost: $" + dbHandler.getShoppingListTotalCost((int) id));
+
     }
     /**
      * this method further initializes the action bar of the activity.
@@ -176,5 +179,12 @@ public class ViewList extends AppCompatActivity {
             //display toast
             Toast.makeText(this, "Item purchased!", Toast.LENGTH_LONG).show();
         }
+    }
+    public void deleteList(MenuItem menuItem) {
+        //delete shoppinglist from db
+        dbHandler.deleteShoppingList((int) id);
+
+        //display list deleted toast
+        Toast.makeText(this, "List Deleted!", Toast.LENGTH_LONG).show();
     }
 }
