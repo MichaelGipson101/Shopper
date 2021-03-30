@@ -409,4 +409,25 @@ public class DBHandler extends SQLiteOpenHelper {
         //return String
         return cost;
     }
+
+    /**
+     * This method gets called when a shopping list item is clicked in the viewlist activity
+     * @param listId database id of the shopping list on which the shoppinglistitem exists
+     * @return number of unpurchased shopping list items on the specified shopping list
+     */
+    public int getUnpurchasedItems (Integer listId) {
+        //get reference to database
+        SQLiteDatabase db = getWritableDatabase();
+
+        //define select statement
+        String query = "SELECT * FROM " + TABLE_SHOPPING_LIST_ITEM +
+                " WHERE " + COLUMN_ITEM_HAS + " = \"false\" " +
+                " AND " + COLUMN_ITEM_LIST_ID + " = " + listId;
+
+        //execute select statement
+        Cursor cursor = db.rawQuery(query, null);
+
+        //return a count of the number of iutems in the cursor
+        return cursor.getCount();
+    }
 }

@@ -1,5 +1,8 @@
 package com.example.shopper;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,6 +11,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +22,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.List;
+
+import static com.example.shopper.App.CHANNEL_SHOPPER_ID;
 
 public class ViewList extends AppCompatActivity {
 
@@ -38,6 +45,12 @@ public class ViewList extends AppCompatActivity {
     //declare listview
     ListView itemListView;
 
+    //declare notification manager used to show the notification
+    NotificationManagerCompat notificationManagerCompat;
+
+    //declare string that will store the shopping list name
+    String shoppingListName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +70,7 @@ public class ViewList extends AppCompatActivity {
         dbHandler = new DBHandler(this, null);
 
         //call getshoppinglistname method and store its return in the string
-        String shoppingListName = dbHandler.getShoppingListName((int) id);
+        shoppingListName = dbHandler.getShoppingListName((int) id);
 
         //set the title of the viewlist activity to the shoppinglist name
         this.setTitle(shoppingListName);
@@ -102,6 +115,8 @@ public class ViewList extends AppCompatActivity {
         //set the subtitle to the totalcost of the shoppinglist
         toolbar.setSubtitle("Total Cost: $" + dbHandler.getShoppingListTotalCost((int) id));
 
+        //initialize the notification manager
+        notificationManagerCompat = NotificationManagerCompat.from(this);
     }
     /**
      * this method further initializes the action bar of the activity.
@@ -178,6 +193,18 @@ public class ViewList extends AppCompatActivity {
 
             //display toast
             Toast.makeText(this, "Item purchased!", Toast.LENGTH_LONG).show();
+        }
+
+        if (dbHandler.getUnpurchasedItems((int) this.id) == 0) {
+            //initialize notification
+            Notification notification = new NotificationCompat.Builder(this,
+                    CHANNEL_SHOPPER_ID)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Shopper")
+                    .setContentText(shoppingListName + " completed!").build();
+
+            //show notification
+            notificationManagerCompat.notify(1, notification);
         }
     }
     public void deleteList(MenuItem menuItem) {
