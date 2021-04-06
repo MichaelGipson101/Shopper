@@ -1,83 +1,72 @@
-package com.example.shopper;
+package com.example.shopper
 
-import android.content.Intent;
-import android.os.Bundle;
+import android.content.Intent
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Toast;
-
-public class AddItem extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+class AddItem : AppCompatActivity(), OnItemSelectedListener {
     //delcare a bundle and a long used to get and store the data sent from
     //the viewlist activity
-    Bundle bundle;
-    long id;
+    var bundle: Bundle? = null
+    var id: Long = 0
 
     //declare dbhandler
-    DBHandler dbHandler;
+    var dbHandler: DBHandler? = null
 
     //declare intent
-    Intent intent;
+    //var intent: Intent? = null
 
     //declare edittexts
-    EditText nameEditText;
-    EditText priceEditText;
+    var nameEditText: EditText? = null
+    var priceEditText: EditText? = null
 
     //declare spinner
-    Spinner quantitySpinner;
+    var quantitySpinner: Spinner? = null
 
     //declare a string to store quantity
-    String quantity;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    var quantity: String? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_add_item)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
         //initialize the bundle
-        bundle = this.getIntent().getExtras();
+        bundle = getIntent().extras
 
         //use bundle to get id and store it in id field
-        id = bundle.getLong("_id");
+        id = bundle!!.getLong("_id")
 
         //initialize dbhandler
-
-        dbHandler = new DBHandler(this, null);
+        dbHandler = DBHandler(this, null)
 
         //initialize edittexts
-        nameEditText = (EditText) findViewById(R.id.nameEditText);
-        priceEditText = (EditText) findViewById(R.id.priceEditText);
+        nameEditText = findViewById<View>(R.id.nameEditText) as EditText
+        priceEditText = findViewById<View>(R.id.priceEditText) as EditText
 
         //initialize spinner
-        quantitySpinner = (Spinner) findViewById(R.id.quantitySpinner);
+        quantitySpinner = findViewById<View>(R.id.quantitySpinner) as Spinner
 
         //initialize arrayadapter with values in quantities string-array
         //and stylize it with style defined by simple spinner item
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.quantities, android.R.layout.simple_spinner_item);
+        val adapter = ArrayAdapter.createFromResource(this,
+                R.array.quantities, android.R.layout.simple_spinner_item)
 
         //further stylize the arrayadapter
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
 
         //set the arrayadapter on the spinner
-        quantitySpinner.setAdapter(adapter);
+        quantitySpinner!!.adapter = adapter
 
         //register an onitemselectedlistener to spinner
-        quantitySpinner.setOnItemSelectedListener(this);
-
+        quantitySpinner!!.onItemSelectedListener = this
     }
+
     /**
      * this method further initializes the action bar of the activity.
      * it gets the code (xml) in the menu resource file and incorporates it into the
@@ -85,11 +74,10 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
      * @param menu menu resource file for the activity
      * @return true
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_item, menu);
-        return true;
+        menuInflater.inflate(R.menu.menu_add_item, menu)
+        return true
     }
 
     /**
@@ -98,47 +86,48 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
      * @param item selected menu item in the overflow menu
      * @return true if menu item is selected, else false
      */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //get the id of the menu item selected
-        switch (item.getItemId()) {
-            case R.id.action_home :
+        return when (item.itemId) {
+            R.id.action_home -> {
                 // initialize an intent for the main activity and start it
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_create_list :
+                intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.action_create_list -> {
                 // initialize an intent for the main activity and start it
-                intent = new Intent(this, CreateList.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_view_list :
+                intent = Intent(this, CreateList::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.action_view_list -> {
                 // initialize an intent for the add item activity and start it
-                intent = new Intent(this, ViewList.class);
+                intent = Intent(this, ViewList::class.java)
                 //put the database id in the intent
-                intent.putExtra("_id", id);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                intent!!.putExtra("_id", id)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    public void addItem(MenuItem item) {
+    fun addItem(item: MenuItem?) {
         //get data input into edittexts and store it in strings
-        String name = nameEditText.getText().toString();
-        String price = priceEditText.getText().toString();
+        val name = nameEditText!!.text.toString()
+        val price = priceEditText!!.text.toString()
 
         //trim strings and see if they're equal to empty strings
-        if (name.trim().equals("") || price.trim().equals("") || quantity.trim().equals("")) {
+        if (name.trim { it <= ' ' } == "" || price.trim { it <= ' ' } == "" || quantity!!.trim { it <= ' ' } == "") {
             //display toast\
             Toast.makeText(this, "Please enter a name, price, and quantity",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show()
         } else {
             //else add item into db
-            dbHandler.addItemToList(name, Double.parseDouble(price), Integer.parseInt(quantity), (int) id);
+            dbHandler!!.addItemToList(name, price.toDouble(), quantity!!.toInt(), id.toInt())
             Toast.makeText(this, "Item added!",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show()
         }
     }
 
@@ -149,13 +138,9 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
      * @param position position of item that was selected in the spinner
      * @param id database id of the selected item in the spinner
      */
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        quantity = parent.getItemAtPosition(position).toString();
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        quantity = parent.getItemAtPosition(position).toString()
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    override fun onNothingSelected(parent: AdapterView<*>?) {}
 }

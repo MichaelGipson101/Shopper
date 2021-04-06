@@ -1,87 +1,78 @@
-package com.example.shopper;
+package com.example.shopper
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
+import android.content.Intent
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
-
-public class ViewItem extends AppCompatActivity {
+class ViewItem : AppCompatActivity() {
     //delcare a bundle and a long used to get and store the data sent from
     //the viewlist activity
-    Bundle bundle;
-    long id;
-    long listId;
+    var bundle: Bundle? = null
+    var id: Long = 0
+    var listId: Long = 0
 
     //declare a dbhandler
-    DBHandler dbHandler;
+    var dbHandler: DBHandler? = null
 
     //declare an intent
-    Intent intent;
+    //var intent: Intent? = null
 
     //declare edittexts
-    EditText nameEditText;
-    EditText priceEditText;
-    EditText quantityEditText;
+    var nameEditText: EditText? = null
+    var priceEditText: EditText? = null
+    var quantityEditText: EditText? = null
 
     //declare strings to store the clicked shopping list item's name, price, quantity
-    String name;
-    String price;
-    String quantity;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_item);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    var name: String? = null
+    var price: String? = null
+    var quantity: String? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_view_item)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         //initialize the bundle
-        bundle = this.getIntent().getExtras();
+        bundle = getIntent().extras
 
         //use bundle to get id and store it in id field
-        id = bundle.getLong("_id");
+        id = bundle!!.getLong("_id")
 
         //use bundle to get id and store it in id field
-        listId = bundle.getLong("_list_id");
+        listId = bundle!!.getLong("_list_id")
 
         //initialize dbhandler
-        dbHandler = new DBHandler(this, null);
+        dbHandler = DBHandler(this, null)
 
         //initialize edittexts
-        nameEditText = (EditText) findViewById(R.id.nameEditText);
-        priceEditText = (EditText) findViewById(R.id.priceEditText);
-        quantityEditText = (EditText) findViewById(R.id.quantityEditText);
+        nameEditText = findViewById<View>(R.id.nameEditText) as EditText
+        priceEditText = findViewById<View>(R.id.priceEditText) as EditText
+        quantityEditText = findViewById<View>(R.id.quantityEditText) as EditText
 
         //disable edittexts
-        nameEditText.setEnabled(false);
-        priceEditText.setEnabled(false);
-        quantityEditText.setEnabled(false);
+        nameEditText!!.isEnabled = false
+        priceEditText!!.isEnabled = false
+        quantityEditText!!.isEnabled = false
 
         //call the dbhandler method getshoppinglistiem
-        Cursor cursor = dbHandler.getShoppingListItem((int) id);
-
-        cursor.moveToFirst();
+        val cursor = dbHandler!!.getShoppingListItem(id.toInt())
+        cursor.moveToFirst()
 
         //get the name, price, and quantity in the cursor and store it in strings
-        name = cursor.getString(cursor.getColumnIndex( "name"));
-        price = cursor.getString(cursor.getColumnIndex( "price"));
-        quantity = cursor.getString(cursor.getColumnIndex( "quantity"));
+        name = cursor.getString(cursor.getColumnIndex("name"))
+        price = cursor.getString(cursor.getColumnIndex("price"))
+        quantity = cursor.getString(cursor.getColumnIndex("quantity"))
 
         //set the name price and quantity values in the edittexts
-        nameEditText.setText(name);
-        priceEditText.setText(price);
-        quantityEditText.setText(quantity);
+        nameEditText!!.setText(name)
+        priceEditText!!.setText(price)
+        quantityEditText!!.setText(quantity)
     }
 
     /**
@@ -91,11 +82,10 @@ public class ViewItem extends AppCompatActivity {
      * @param menu menu resource file for the activity
      * @return true
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_view_item, menu);
-        return true;
+        menuInflater.inflate(R.menu.menu_view_item, menu)
+        return true
     }
 
     /**
@@ -104,40 +94,42 @@ public class ViewItem extends AppCompatActivity {
      * @param item selected menu item in the overflow menu
      * @return true if menu item is selected, else false
      */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //get the id of the menu item selected
-        switch (item.getItemId()) {
-            case R.id.action_home :
+        return when (item.itemId) {
+            R.id.action_home -> {
                 // initialize an intent for the main activity and start it
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_create_list :
+                intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.action_create_list -> {
                 // initialize an intent for the main activity and start it
-                intent = new Intent(this, CreateList.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_add_item :
+                intent = Intent(this, CreateList::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.action_add_item -> {
                 // initialize an intent for the add item activity and start it
-                intent = new Intent(this, AddItem.class);
+                intent = Intent(this, AddItem::class.java)
                 //put the database id in the intent
-                intent.putExtra("_id", listId);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                intent!!.putExtra("_id", listId)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
+
     /**
      * This method gets called when the delete button in the action bar of the view item activity gets clicked
      * @param menuItem database id of the shopping list item to be deleted
      */
-    public void deleteItem(MenuItem menuItem) {
+    fun deleteItem(menuItem: MenuItem?) {
         //delete shoppinglistitem from db
-        dbHandler.deleteShoppingListItem((int) id);
+        dbHandler!!.deleteShoppingListItem(id.toInt())
 
         //display item deleted toast
-        Toast.makeText(this, "Item Deleted!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Item Deleted!", Toast.LENGTH_LONG).show()
     }
 }
